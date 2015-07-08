@@ -16,7 +16,6 @@ import org.appcelerator.kroll.common.Log;
 import org.appcelerator.titanium.TiApplication;
 import org.appcelerator.titanium.util.TiRHelper;
 import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.Map;
 

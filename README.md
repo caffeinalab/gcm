@@ -31,3 +31,6 @@ require('it.caffeina.gcm').registerForPushNotifications({
 ```js
 require('it.caffeina.gcm').unregisterForPushNotifications();
 ```
+
+
+* The code is inspired from https://github.com/morinel/gcmpush and edited for our purposes *
