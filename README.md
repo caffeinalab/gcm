@@ -4,6 +4,11 @@
 
 **The code is inspired from https://github.com/morinel/gcmpush and edited for our purposes**
 
+We have maintaned the same syntax of `Ti.Network` for iOS notifications.
+
+Hope you like this choice :)
+
+
 #### Register for Push notifications
 
 ```js
