@@ -16,6 +16,7 @@ require('it.caffeina.gcm').registerForPushNotifications({
 	success: function(e) {
 
 		// Send the e.deviceToken variable to your PUSH server
+		Ti.API.log('Notifications: device token is ' + e.deviceToken);
 
 	},
 	error: function(err) {
