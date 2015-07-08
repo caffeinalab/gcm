@@ -33,3 +33,14 @@ require('it.caffeina.gcm').registerForPushNotifications({
 ```js
 require('it.caffeina.gcm').unregisterForPushNotifications();
 ```
+
+
+#### Send the notification from your server
+
+The payload of the notification JSON object can contain:
+
+* `title`: The title to show in the notification center.
+* `alert`: The message to show in the notification center and in the status bar.
+* `sound`: A sound relative to the drawable or `default`.
+* `priority`: A integer from `-2` to `2` indicating the priority. If you set values greater than 0, an *heads up* notification is shown.
+* `vibrate`: A boolean value indicating if the phone should vibrate.
