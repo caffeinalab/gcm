@@ -1,0 +1,18 @@
+#
+# this is your module manifest and used by Titanium
+# during compilation, packaging, distribution, etc.
+#
+version: 1.0.0
+apiversion: 2
+architectures: armeabi armeabi-v7a x86
+description: CaffeinaGCM
+author: Flavio De Stefano
+license: Specify your license
+copyright: Copyright (c) 2015 by Your Company
+
+# these should not be edited
+name: CaffeinaGCM
+moduleid: it.caffeina.gcm
+guid: 67d2b34f-e98f-443c-b68e-130057b8fdbf
+platform: android
+minsdk: 4.0.0.GA.CAFFEINA

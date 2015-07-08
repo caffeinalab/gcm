@@ -1,0 +1,16 @@
+%define lookup-function-name lookupGeneratedInit
+%define class-name CaffeinaGCMBindings
+%{
+
+#include <string.h>
+#include <v8.h>
+#include <KrollBindings.h>
+
+#include "it.caffeina.gcm.CaffeinaGCMModule.h"
+
+
+%}
+struct titanium::bindings::BindEntry;
+%%
+it.caffeina.gcm.CaffeinaGCMModule, ::it::caffeina::gcm::CaffeinaGCMModule::bindProxy, ::it::caffeina::gcm::CaffeinaGCMModule::dispose
+%%
