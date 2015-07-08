@@ -9,7 +9,8 @@ require('it.caffeina.gcm').registerForPushNotifications({
 	senderId: 'XXXXXXXXXXXX',
 	callback: function(e) {
 
-		// Here you have the payload
+		// Here you have the payload of the upcoming notification
+		// Handle how you want.
 
 	},
 	success: function(e) {
