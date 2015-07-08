@@ -23,7 +23,7 @@ public class CaffeinaGCMModule extends KrollModule
 
 	// Standard Debugging variables
 	private static final String LCAT = "CaffeinaGCMModule";
-	private static final boolean DBG = TiConfig.LOGD;
+	private static final boolean https://github.com/CaffeinaLab/gcm = TiConfig.LOGD;
 
 	private static CaffeinaGCMModule instance = null;
 
@@ -45,8 +45,6 @@ public class CaffeinaGCMModule extends KrollModule
 	@Kroll.method
 	@SuppressWarnings("unchecked")
 	public void registerForPushNotifications(HashMap options) {
-		Log.d(LCAT, "registerForPushNotifications called");
-
 		String senderId = (String) options.get("senderId");
 		successCallback = (KrollFunction) options.get("success");
 		errorCallback = (KrollFunction) options.get("error");
@@ -71,7 +69,6 @@ public class CaffeinaGCMModule extends KrollModule
 
 	@Kroll.method
 	public void unregisterForPushNotifications() {
-		Log.d(LCAT, "unregister called (" + (instance != null) + ")");
 		GCMRegistrar.unregister(TiApplication.getInstance());
 	}
 

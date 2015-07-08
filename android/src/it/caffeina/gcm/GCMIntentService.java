@@ -86,8 +86,6 @@ public class GCMIntentService extends GCMBaseIntentService {
 		if (alert == null) {
 			Log.d(LCAT, "Message received but no message so will make this silent");
 		} else {
-			Log.d(LCAT, "Creating notification...");
-
 
 			String pkg = TiApplication.getInstance().getApplicationContext().getPackageName();
 			Intent launcherIntent = TiApplication.getInstance().getApplicationContext().getPackageManager().getLaunchIntentForPackage(pkg);
