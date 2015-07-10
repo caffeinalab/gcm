@@ -1,6 +1,7 @@
 package it.caffeina.gcm;
 
 import android.app.Activity;
+import android.content.Intent;
 
 import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.KrollFunction;
@@ -13,25 +14,19 @@ import org.appcelerator.titanium.TiApplication;
 import com.google.android.gcm.GCMRegistrar;
 import com.google.gson.Gson;
 
-import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
 @Kroll.module(name="CaffeinaGCM", id="it.caffeina.gcm")
-public class CaffeinaGCMModule extends KrollModule
-{
+public class CaffeinaGCMModule extends KrollModule {
 
-	// Standard Debugging variables
-	private static final String LCAT = "CaffeinaGCMModule";
-	private static final boolean https://github.com/CaffeinaLab/gcm = TiConfig.LOGD;
+	private static final String LCAT = "it.caffeina.gcm.CaffeinaGCMModule";
 
 	private static CaffeinaGCMModule instance = null;
 
 	private KrollFunction successCallback = null;
 	private KrollFunction errorCallback = null;
 	private KrollFunction messageCallback = null;
-
-	public static final String LAST_DATA = "it.caffeina.gcm.last_data";
 
 	public CaffeinaGCMModule() {
 		super();
@@ -45,10 +40,10 @@ public class CaffeinaGCMModule extends KrollModule
 	@Kroll.method
 	@SuppressWarnings("unchecked")
 	public void registerForPushNotifications(HashMap options) {
-		String senderId = (String) options.get("senderId");
-		successCallback = (KrollFunction) options.get("success");
-		errorCallback = (KrollFunction) options.get("error");
-		messageCallback = (KrollFunction) options.get("callback");
+		String senderId = (String)options.get("senderId");
+		successCallback = (KrollFunction)options.get("success");
+		errorCallback = (KrollFunction)options.get("error");
+		messageCallback = (KrollFunction)options.get("callback");
 
 		if (senderId != null) {
 			GCMRegistrar.register(TiApplication.getInstance(), senderId);
@@ -59,6 +54,21 @@ public class CaffeinaGCMModule extends KrollModule
 			} else {
 				Log.e(LCAT, "Error while gettings registrationId from GCM");
 				sendError("Error while gettings registrationId from GCM");
+			}
+
+			//////////////////////////////////////
+			// Send old notification if present //
+			//////////////////////////////////////
+
+			Intent intent = TiApplication.getInstance().getRootOrCurrentActivity().getIntent();
+
+			String notif = intent.getStringExtra("notification");
+			if (notif != null) {
+				try {
+					Map map = new Gson().fromJson(notif, Map.class);
+					map.put("inBackground", true);
+					sendMessage(new KrollDict(map));
+				} catch (Exception ex) {}
 			}
 
 		} else {
@@ -72,24 +82,10 @@ public class CaffeinaGCMModule extends KrollModule
 		GCMRegistrar.unregister(TiApplication.getInstance());
 	}
 
-
 	@Kroll.method
 	@Kroll.getProperty
 	public String getRegistrationId() {
 		return GCMRegistrar.getRegistrationId(TiApplication.getInstance());
-	}
-
-	@Kroll.method
-	@Kroll.getProperty
-	@SuppressWarnings("unchecked")
-	public KrollDict getLastData() {
-		Map map = new Gson().fromJson(TiApplication.getInstance().getAppProperties().getString(LAST_DATA, null), Map.class);
-		return map != null ? new KrollDict(map) : null;
-	}
-
-	@Kroll.method
-	public void clearLastData() {
-		TiApplication.getInstance().getAppProperties().removeProperty(LAST_DATA);
 	}
 
 	public void sendSuccess(String registrationId) {
@@ -120,46 +116,9 @@ public class CaffeinaGCMModule extends KrollModule
 		}
 	}
 
-
 	@Kroll.onAppCreate
 	public static void onAppCreate(TiApplication app) {
 		Log.d(LCAT, "onAppCreate " + app + " (" + (instance != null) + ")");
-	}
-
-	@Override
-	protected void initActivity(Activity activity) {
-		Log.d(LCAT, "initActivity " + activity + " (" + (instance != null) + ")");
-		super.initActivity(activity);
-	}
-
-	@Override
-	public void onResume(Activity activity) {
-		Log.d(LCAT, "onResume " + activity + " (" + (instance != null) + ")");
-		super.onResume(activity);
-	}
-
-	@Override
-	public void onPause(Activity activity) {
-		Log.d(LCAT, "onPause " + activity + " (" + (instance != null) + ")");
-		super.onPause(activity);
-	}
-
-	@Override
-	public void onDestroy(Activity activity) {
-		Log.d(LCAT, "onDestroy " + activity + " (" + (instance != null) + ")");
-		super.onDestroy(activity);
-	}
-
-	@Override
-	public void onStart(Activity activity) {
-		Log.d(LCAT, "onStart " + activity + " (" + (instance != null) + ")");
-		super.onStart(activity);
-	}
-
-	@Override
-	public void onStop(Activity activity) {
-		Log.d(LCAT, "onStop " + activity + " (" + (instance != null) + ")");
-		super.onStop(activity);
 	}
 
 }

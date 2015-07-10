@@ -21,7 +21,7 @@ import java.util.Map;
 
 public class GCMIntentService extends GCMBaseIntentService {
 
-	private static final String LCAT = "GCMIntentService";
+	private static final String LCAT = "it.caffeina.gcm.GCMIntentService";
 
 	public GCMIntentService() {
 		super("");
@@ -58,6 +58,8 @@ public class GCMIntentService extends GCMBaseIntentService {
 	@SuppressWarnings("unchecked")
 	protected void onMessage(Context context, Intent intent) {
 		Log.d(LCAT, "Push notification received");
+		TiApplication instance = TiApplication.getInstance();
+
 
 		///////////////////////////////////
 		// Build the object notification //
@@ -69,13 +71,6 @@ public class GCMIntentService extends GCMBaseIntentService {
 			data.put(eventKey, intent.getExtras().getString(key));
 		}
 
-		////////////////////////////////////
-		// Store in the Ti.App.Properties //
-		////////////////////////////////////
-
-		JSONObject json = new JSONObject(data);
-		TiApplication.getInstance().getAppProperties().setString(CaffeinaGCMModule.LAST_DATA, json.toString());
-
 
 		////////////////////////////////////////////////////
 		// Get the alert property and define the behavior //
@@ -83,14 +78,17 @@ public class GCMIntentService extends GCMBaseIntentService {
 
 		String alert = (String)data.get("alert");
 
-		if (alert == null) {
-			Log.d(LCAT, "Message received but no message so will make this silent");
+		if (TiApplication.isCurrentActivityInForeground()) {
+			Log.d(LCAT, "Message received but App is no foreground, so no alert");
+		} else if (alert == null || alert.length() == 0) {
+			Log.d(LCAT, "Message received but alert is empty");
 		} else {
 
-			String pkg = TiApplication.getInstance().getApplicationContext().getPackageName();
-			Intent launcherIntent = TiApplication.getInstance().getApplicationContext().getPackageManager().getLaunchIntentForPackage(pkg);
+			String pkg = instance.getApplicationContext().getPackageName();
+			Intent launcherIntent = instance.getApplicationContext().getPackageManager().getLaunchIntentForPackage(pkg);
 			launcherIntent.setFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 			launcherIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+			launcherIntent.putExtra("notification", (new JSONObject(data)).toString());
 
 			PendingIntent contentIntent = PendingIntent.getActivity(this, 0, launcherIntent, PendingIntent.FLAG_ONE_SHOT);
 
@@ -118,7 +116,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 			// Title //
 			///////////
 
-			String title = TiApplication.getInstance().getAppInfo().getName();
+			String title = instance.getAppInfo().getName();
 			if (data.get("title") != null && ((String)data.get("title")).length() > 0) {
 				title = (String)data.get("title");
 			}
