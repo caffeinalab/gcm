@@ -1,6 +1,4 @@
-# CaffeinaGCM
-
-### Google Cloud Messaging support
+# GCM: Google Cloud Messaging support
 
 **The code is inspired from https://github.com/morinel/gcmpush and edited for our purposes.**
 
