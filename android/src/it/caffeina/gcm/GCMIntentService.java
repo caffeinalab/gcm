@@ -12,6 +12,8 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import com.google.android.gcm.GCMBaseIntentService;
 import com.google.gson.Gson;
+import java.lang.reflect.Type;
+import com.google.gson.reflect.TypeToken;
 import org.appcelerator.kroll.common.Log;
 import org.appcelerator.titanium.TiApplication;
 import org.appcelerator.titanium.util.TiRHelper;
@@ -63,13 +65,19 @@ public class GCMIntentService extends GCMBaseIntentService {
 		// Build the object notification //
 		///////////////////////////////////
 
-		String _data = intent.getExtras().getString("data");
-		HashMap data = null;
+		String _data = intent.getStringExtra("data");
+		if (_data == null) {
+			Log.e(LCAT, "No data found in the payload");
+			return;
+		}
+
+		Type type = new TypeToken< HashMap<String, String> >(){}.getType();
+		HashMap<String, String> data = null;
 
 		try {
-			data = new Gson().fromJson(_data, HashMap.class);
+			data = new Gson().fromJson(_data, type);
 		} catch (Exception ex) {
-			Log.e(LCAT, "No payload for this notifications, ignoring");
+			Log.e(LCAT, "No valid payload for this notifications");
 			return;
 		}
 
@@ -83,7 +91,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 			Log.d(LCAT, "Message received but alert is empty.");
 		} else {
 
-			String alert = (String)data.get("alert");
+			String alert = data.get("alert");
 
 			String pkg = instance.getApplicationContext().getPackageName();
 			Intent launcherIntent = instance.getApplicationContext().getPackageManager().getLaunchIntentForPackage(pkg);
@@ -99,13 +107,13 @@ public class GCMIntentService extends GCMBaseIntentService {
 			// Badge //
 			///////////
 
-			int badge = data.containsKey("badge") ? Integer.parseInt((String)data.get("badge")) : 0;
+			int badge = data.containsKey("badge") ? Integer.parseInt(data.get("badge")) : 0;
 
 			//////////////
 			// Priority //
 			//////////////
 
-			int priority = data.containsKey("priority") ? Integer.parseInt((String)data.get("priority")) : 0;
+			int priority = data.containsKey("priority") ? Integer.parseInt(data.get("priority")) : 0;
 
 			///////////
 			// Title //
@@ -113,7 +121,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 
 			String title = instance.getAppInfo().getName();
 			if (data.containsKey("title")) {
-				title = (String)data.get("title");
+				title = data.get("title");
 			}
 
 			///////////
@@ -138,7 +146,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 			///////////
 
 			if (data.containsKey("sound")) {
-				String sound = (String)data.get("sound");
+				String sound = data.get("sound");
 				if ("default".equals(sound)) {
 					notification.defaults |= Notification.DEFAULT_SOUND;
 				} else {
@@ -151,7 +159,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 			// Vibration //
 			///////////////
 
-			if (data.containsKey("vibrate") && (Boolean)data.get("vibrate") == true) {
+			if (data.containsKey("vibrate") && (data.get("vibrate") == "true" || data.get("vibrate") == "1")) {
 				notification.defaults |= Notification.DEFAULT_VIBRATE;
 			}
 
