@@ -52,7 +52,6 @@ public class CaffeinaGCMModule extends KrollModule {
 			if (registrationId != null && registrationId.length() > 0) {
 				sendSuccess(registrationId);
 			} else {
-				Log.e(LCAT, "Error while gettings registrationId from GCM");
 				sendError("Error while gettings registrationId from GCM");
 			}
 
@@ -62,17 +61,11 @@ public class CaffeinaGCMModule extends KrollModule {
 
 			Intent intent = TiApplication.getInstance().getRootOrCurrentActivity().getIntent();
 
-			String notif = intent.getStringExtra("notification");
-			if (notif != null) {
-				try {
-					Map map = new Gson().fromJson(notif, Map.class);
-					map.put("inBackground", true);
-					sendMessage(new KrollDict(map));
-				} catch (Exception ex) {}
+			if (intent.hasExtra("notification")) {
+				sendMessage(intent.getStringExtra("notification"), true);
 			}
 
 		} else {
-			Log.e(LCAT, "No GCM senderId specified; get it from the Google Play Developer Console");
 			sendError("No GCM senderId specified; get it from the Google Play Developer Console");
 		}
 	}
@@ -89,31 +82,33 @@ public class CaffeinaGCMModule extends KrollModule {
 	}
 
 	public void sendSuccess(String registrationId) {
-		if (successCallback != null) {
-			HashMap<String, Object> data = new HashMap<String, Object>();
-			data.put("registrationId", registrationId);
-			data.put("deviceToken", registrationId);
+		if (successCallback == null) return;
 
-			successCallback.callAsync(getKrollObject(), data);
-		}
+		HashMap<String, Object> data = new HashMap<String, Object>();
+		data.put("registrationId", registrationId);
+		data.put("deviceToken", registrationId);
+
+		successCallback.callAsync(getKrollObject(), data);
 	}
 
 	public void sendError(String error) {
-		if (errorCallback != null) {
-			HashMap<String, Object> data = new HashMap<String, Object>();
-			data.put("error", error);
+		Log.e(LCAT, error);
+		if (errorCallback == null) return;
 
-			errorCallback.callAsync(getKrollObject(), data);
-		}
+		HashMap<String, Object> data = new HashMap<String, Object>();
+		data.put("error", error);
+
+		errorCallback.callAsync(getKrollObject(), data);
 	}
 
-	public void sendMessage(HashMap<String, Object> messageData) {
-		if (messageCallback != null) {
-			HashMap<String, Object> data = new HashMap<String, Object>();
-			data.put("data", messageData);
+	public void sendMessage(String message, Boolean inBackground) {
+		if (messageCallback == null) return;
 
-			messageCallback.call(getKrollObject(), data);
-		}
+		HashMap<String, Object> data = new HashMap<String, Object>();
+		data.put("data", new Gson().fromJson(message, HashMap.class));
+		data.put("inBackground", inBackground);
+
+		messageCallback.call(getKrollObject(), data);
 	}
 
 	@Kroll.onAppCreate

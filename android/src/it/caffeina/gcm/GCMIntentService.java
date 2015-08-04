@@ -15,7 +15,6 @@ import com.google.gson.Gson;
 import org.appcelerator.kroll.common.Log;
 import org.appcelerator.titanium.TiApplication;
 import org.appcelerator.titanium.util.TiRHelper;
-import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,35 +59,37 @@ public class GCMIntentService extends GCMBaseIntentService {
 		Log.d(LCAT, "Push notification received");
 		TiApplication instance = TiApplication.getInstance();
 
-
 		///////////////////////////////////
 		// Build the object notification //
 		///////////////////////////////////
 
-		HashMap<String, Object> data = new HashMap<String, Object>();
-		for (String key : intent.getExtras().keySet()) {
-			String eventKey = key.startsWith("data.") ? key.substring(5) : key;
-			data.put(eventKey, intent.getExtras().getString(key));
-		}
+		String _data = intent.getExtras().getString("data");
+		HashMap data = null;
 
+		try {
+			data = new Gson().fromJson(_data, HashMap.class);
+		} catch (Exception ex) {
+			Log.e(LCAT, "No payload for this notifications, ignoring");
+			return;
+		}
 
 		////////////////////////////////////////////////////
 		// Get the alert property and define the behavior //
 		////////////////////////////////////////////////////
 
-		String alert = (String)data.get("alert");
-
 		if (TiApplication.isCurrentActivityInForeground()) {
-			Log.d(LCAT, "Message received but App is no foreground, so no alert");
-		} else if (alert == null || alert.length() == 0) {
-			Log.d(LCAT, "Message received but alert is empty");
+			Log.d(LCAT, "Message received but the app is on foreground, so you have to handle this in the app.");
+		} else if ( ! data.containsKey("alert")) {
+			Log.d(LCAT, "Message received but alert is empty.");
 		} else {
+
+			String alert = (String)data.get("alert");
 
 			String pkg = instance.getApplicationContext().getPackageName();
 			Intent launcherIntent = instance.getApplicationContext().getPackageManager().getLaunchIntentForPackage(pkg);
 			launcherIntent.setFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 			launcherIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-			launcherIntent.putExtra("notification", (new JSONObject(data)).toString());
+			launcherIntent.putExtra("notification", _data);
 
 			PendingIntent contentIntent = PendingIntent.getActivity(this, 0, launcherIntent, PendingIntent.FLAG_ONE_SHOT);
 
@@ -98,26 +99,20 @@ public class GCMIntentService extends GCMBaseIntentService {
 			// Badge //
 			///////////
 
-			int badge = 0;
-			if (data.get("badge") != null) {
-				badge = Integer.parseInt((String)data.get("badge"));
-			}
+			int badge = data.containsKey("badge") ? Integer.parseInt((String)data.get("badge")) : 0;
 
 			//////////////
 			// Priority //
 			//////////////
 
-			int priority = 0;
-			if (data.get("priority") != null) {
-				priority = Integer.parseInt((String)data.get("priority"));
-			}
+			int priority = data.containsKey("priority") ? Integer.parseInt((String)data.get("priority")) : 0;
 
 			///////////
 			// Title //
 			///////////
 
 			String title = instance.getAppInfo().getName();
-			if (data.get("title") != null && ((String)data.get("title")).length() > 0) {
+			if (data.containsKey("title")) {
 				title = (String)data.get("title");
 			}
 
@@ -142,18 +137,21 @@ public class GCMIntentService extends GCMBaseIntentService {
 			// Sound //
 			///////////
 
-			String sound = (String)data.get("sound");
-			if ("default".equals(sound)) {
-				notification.defaults |= Notification.DEFAULT_SOUND;
-			} else if (sound != null) {
-				notification.sound = Uri.parse("android.resource://" + pkg + "/" + getResource("raw", sound));
+			if (data.containsKey("sound")) {
+				String sound = (String)data.get("sound");
+				if ("default".equals(sound)) {
+					notification.defaults |= Notification.DEFAULT_SOUND;
+				} else {
+					notification.sound = Uri.parse("android.resource://" + pkg + "/" + getResource("raw", sound));
+				}
 			}
+
 
 			///////////////
 			// Vibration //
 			///////////////
 
-			if (data.get("vibrate") != null && Boolean.valueOf((String)data.get("vibrate"))) {
+			if (data.containsKey("vibrate") && (Boolean)data.get("vibrate") == true) {
 				notification.defaults |= Notification.DEFAULT_VIBRATE;
 			}
 
@@ -172,7 +170,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 		}
 
 		if (CaffeinaGCMModule.getInstance() != null) {
-			CaffeinaGCMModule.getInstance().sendMessage(data);
+			CaffeinaGCMModule.getInstance().sendMessage(_data, false);
 		}
 	}
 
