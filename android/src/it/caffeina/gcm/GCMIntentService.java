@@ -85,7 +85,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 		// Get the alert property and define the behavior //
 		////////////////////////////////////////////////////
 
-		if (TiApplication.isCurrentActivityInForeground()) {
+		if (TiApplication.isCurrentActivityInForeground() || instance == null) {
 			Log.d(LCAT, "Message received but the app is on foreground, so you have to handle this in the app.");
 		} else if ( ! data.containsKey("alert")) {
 			Log.d(LCAT, "Message received but alert is empty.");
@@ -101,7 +101,8 @@ public class GCMIntentService extends GCMBaseIntentService {
 
 			PendingIntent contentIntent = PendingIntent.getActivity(this, 0, launcherIntent, PendingIntent.FLAG_ONE_SHOT);
 
-			int appIcon = getResource("drawable", "appicon.png");
+			int appIcon = getResource("drawable", "appicon");
+			int smallIcon = getResource("drawable", "notificationicon");
 
 			///////////
 			// Badge //
@@ -134,7 +135,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 			builder.setTicker(alert);
 			builder.setContentIntent(contentIntent);
 			builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), appIcon));
-			builder.setSmallIcon(appIcon);
+			builder.setSmallIcon(smallIcon);
 			builder.setNumber(badge);
 			builder.setAutoCancel(true);
 			builder.setPriority(priority);
@@ -159,7 +160,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 			// Vibration //
 			///////////////
 
-			if (data.containsKey("vibrate") && (data.get("vibrate") == "true" || data.get("vibrate") == "1")) {
+			if (data.containsKey("vibrate") && ( "true".equals(data.get("vibrate")) || "1".equals(data.get("vibrate")) ) ) {
 				notification.defaults |= Notification.DEFAULT_VIBRATE;
 			}
 

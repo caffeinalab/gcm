@@ -44,6 +44,31 @@ require('it.caffeina.gcm').registerForPushNotifications({
 require('it.caffeina.gcm').unregisterForPushNotifications();
 ```
 
+#### Setting the icon
+
+The module sets the notification tray icon taking it from `/platform/android/res/drawable-*`.
+
+It should be flat (no gradients), white and face-on perspective. You have to generate the icon with all resolutions.
+
+```
+22 × 22 area in 24 × 24 (mdpi)
+33 × 33 area in 36 × 36 (hdpi)
+44 × 44 area in 48 × 48 (xhdpi)
+66 × 66 area in 72 × 72 (xxhdpi)
+88 × 88 area in 96 × 96 (xxxhdpi)
+```
+
+You can use this script to generate it once you put the icon in `drawable-xxxhdpi/notificationicon.png`
+
+```sh
+convert drawable-xxxhdpi/notificationicon.png -resize 72x72 drawable-xxhdpi/notificationicon.png
+convert drawable-xxxhdpi/notificationicon.png -resize 48x48 drawable-xhdpi/notificationicon.png
+convert drawable-xxxhdpi/notificationicon.png -resize 36x36 drawable-hdpi/notificationicon.png
+convert drawable-xxxhdpi/notificationicon.png -resize 24x24 drawable-mdpi/notificationicon.png
+```
+
+**If you don't set an icon, no notification is shown.**
+
 #### Send the notification from your server
 
 The payload of the notification JSON object `data` can contain:
@@ -52,7 +77,7 @@ The payload of the notification JSON object `data` can contain:
 * `alert`: The message to show in the notification center and in the status bar.
 * `sound`: A sound relative to the drawable or `default`.
 * `priority`: A integer from `-2` to `2` indicating the priority. If you set values greater than 0, an *heads up* notification is shown.
-* `vibrate`: A boolean value indicating if the phone should vibrate.
+* `vibrate`: A boolean (`true` or `1`) value indicating if the phone should vibrate.
 
 **Remember, all custom properties must be inside the `data` key**
 
