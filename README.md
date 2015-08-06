@@ -71,13 +71,18 @@ convert drawable-xxxhdpi/notificationicon.png -resize 24x24 drawable-mdpi/notifi
 
 #### Send the notification from your server
 
-The payload of the notification JSON object `data` can contain:
+The payload of the notification JSON object `data` should contain:
 
-* `title`: The title to show in the notification center.
 * `alert`: The message to show in the notification center and in the status bar.
-* `sound`: A sound relative to the drawable or `default`.
-* `priority`: A integer from `-2` to `2` indicating the priority. If you set values greater than 0, an *heads up* notification is shown.
-* `vibrate`: A boolean (`true` or `1`) value indicating if the phone should vibrate.
+
+Option values:
+
+* `title`: The title to show in the notification center. Default to app title.
+* `sound`: A sound relative to the drawable or `default`. Default is no sound.
+* `priority`: A integer from `-2` to `2` indicating the priority. If you set values greater than 0, an *heads up* notification is shown. Default is `0`.
+* `vibrate`: A boolean (`true` or `1`) value indicating if the phone should vibrate. Default is `false`.
+* `badge`: An integer value for the badge. The icon on the launchscreen will display this number on the right-top corner. Default is no badge.
+* `largeicon`: A URL represting a large icon to show. Default is null.
 
 **Remember, all custom properties must be inside the `data` key**
 
@@ -116,3 +121,5 @@ curl_close($ch);
 The payload of the notifications is the same that comes from your server, with the addition of:
 
 * `inBackground`: A boolean value indicating if the notification has come when the app was in background, and the user has explicited clicked on the banner.
+
+
