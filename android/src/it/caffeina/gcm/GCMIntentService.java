@@ -176,16 +176,6 @@ public class GCMIntentService extends GCMBaseIntentService {
 				builder.setNumber(badge);
 			}
 
-			////////////////
-			// Autocancel //
-			////////////////
-
-			if (data.containsKey("autocancel") && ( "0".equals(data.get("autocancel")) || "false".equals(data.get("autocancel")) )) {
-				builder.setAutoCancel(false);
-			} else {
-				builder.setAutoCancel(true);
-			}
-
 			///////////
 			// Sound //
 			///////////
