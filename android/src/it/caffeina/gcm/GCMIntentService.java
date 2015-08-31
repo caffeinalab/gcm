@@ -92,13 +92,18 @@ public class GCMIntentService extends GCMBaseIntentService {
 		// Badge on the splash //
 		/////////////////////////
 
-		int badge = data.containsKey("badge") ? Integer.parseInt(data.get("badge")) : 0;
-		if (data.containsKey("badge")) {
-			if (badge == 0) {
-				BadgeUtils.clearBadge(context);
-			} else {
-				BadgeUtils.setBadge(context, badge);
+		int badge = 0;
+		try {
+			if (data.containsKey("badge")) {
+				badge = Integer.parseInt(data.get("badge"));
+				if (badge == 0) {
+					BadgeUtils.clearBadge(context);
+				} else {
+					BadgeUtils.setBadge(context, badge);
+				}
 			}
+		} catch (Exception ex) {
+			Log.e(LCAT, ex.getMessage());
 		}
 
 		////////////////////////////////////////////////////
@@ -142,7 +147,6 @@ public class GCMIntentService extends GCMBaseIntentService {
 			int smallIcon = getResource("drawable", "notificationicon");
 			builder.setSmallIcon(smallIcon);
 
-
 			////////////////
 			// Large icon //
 			////////////////
@@ -159,7 +163,15 @@ public class GCMIntentService extends GCMBaseIntentService {
 			// Priority //
 			//////////////
 
-			int priority = data.containsKey("priority") ? Integer.parseInt(data.get("priority")) : 0;
+			int priority = 0;
+			try {
+				if (data.containsKey("priority")) {
+					priority = Integer.parseInt(data.get("priority"));
+				}
+			} catch (Exception ex) {
+				Log.e(LCAT, ex.getMessage());
+			}
+
 			builder.setPriority(priority);
 
 			///////////
@@ -172,7 +184,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 			// Badge //
 			///////////
 
-			if (data.containsKey("badge")) {
+			if (badge != 0) {
 				builder.setNumber(badge);
 			}
 
