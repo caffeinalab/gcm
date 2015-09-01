@@ -81,6 +81,16 @@ public class CaffeinaGCMModule extends KrollModule {
 		return GCMRegistrar.getRegistrationId(TiApplication.getInstance());
 	}
 
+	@Kroll.method
+	public void setAppBadge(int count) {
+		BadgeUtils.setBadge(TiApplication.getInstance().getApplicationContext(), count);
+	}
+
+	@Kroll.method
+	public int getAppBadge() {
+		return 0;
+	}
+
 	public void sendSuccess(String registrationId) {
 		if (successCallback == null) return;
 

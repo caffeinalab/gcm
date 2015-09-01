@@ -9,8 +9,12 @@ import android.content.pm.PackageManager;
 public class BadgeUtils {
 
     public static void setBadge(Context context, int count) {
-        setBadgeSamsung(context, count);
-        setBadgeSony(context, count);
+        if (count == 0) {
+            clearBadge(context);
+        } else {
+            setBadgeSamsung(context, count);
+            setBadgeSony(context, count);
+        }
     }
 
     public static void clearBadge(Context context) {

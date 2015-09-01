@@ -96,11 +96,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 		try {
 			if (data.containsKey("badge")) {
 				badge = Integer.parseInt(data.get("badge"));
-				if (badge == 0) {
-					BadgeUtils.clearBadge(context);
-				} else {
-					BadgeUtils.setBadge(context, badge);
-				}
+				BadgeUtils.setBadge(context, badge);
 			}
 		} catch (Exception ex) {
 			Log.e(LCAT, ex.getMessage());

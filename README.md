@@ -44,6 +44,12 @@ require('it.caffeina.gcm').registerForPushNotifications({
 require('it.caffeina.gcm').unregisterForPushNotifications();
 ```
 
+#### Set the badge
+
+```js
+require('it.caffeina.gcm').setBadge(2);
+```
+
 #### Setting the icon
 
 The module sets the notification tray icon taking it from `/platform/android/res/drawable-*`.
