@@ -72,8 +72,8 @@ public class GCMIntentService extends GCMBaseIntentService {
 		Log.d(LCAT, "Push notification received");
 		TiApplication instance = TiApplication.getInstance();
 
-		String _data = intent.getStringExtra("data");
-		if (_data == null) {
+		String dataAsString = intent.getStringExtra("data");
+		if (dataAsString == null) {
 			Log.e(LCAT, "No data found in the payload");
 			return;
 		}
@@ -82,7 +82,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 		HashMap<String, String> data = null;
 
 		try {
-			data = new Gson().fromJson(_data, type);
+			data = new Gson().fromJson(dataAsString, type);
 		} catch (Exception ex) {
 			Log.e(LCAT, "No valid payload for this notifications");
 			return;
@@ -106,10 +106,20 @@ public class GCMIntentService extends GCMBaseIntentService {
 		// Get the alert property and define the behavior //
 		////////////////////////////////////////////////////
 
-		if (TiApplication.isCurrentActivityInForeground() || instance == null) {
+		if (TiApplication.isCurrentActivityInForeground()) {
+
 			Log.d(LCAT, "Message received but the app is on foreground, so you have to handle this in the app.");
-		} else if ( ! data.containsKey("alert")) {
+			if (CaffeinaGCMModule.getInstance() != null) {
+				CaffeinaGCMModule.getInstance().sendMessage(dataAsString, false);
+			}
+
+		} else if (data.containsKey("alert") == false) {
+
 			Log.d(LCAT, "Message received but alert is empty.");
+			if (CaffeinaGCMModule.getInstance() != null) {
+				CaffeinaGCMModule.getInstance().sendMessage(dataAsString, false);
+			}
+
 		} else {
 
 			String pkg = instance.getApplicationContext().getPackageName();
@@ -117,7 +127,8 @@ public class GCMIntentService extends GCMBaseIntentService {
 			Intent launcherIntent = instance.getApplicationContext().getPackageManager().getLaunchIntentForPackage(pkg);
 			launcherIntent.setFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 			launcherIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-			launcherIntent.putExtra("notification", _data);
+			launcherIntent.putExtra("notification", dataAsString);
+
 			PendingIntent contentIntent = PendingIntent.getActivity(this, 0, launcherIntent, PendingIntent.FLAG_ONE_SHOT);
 
 			/////////////////////////////////
@@ -127,6 +138,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 			NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 			int builder_defaults = 0;
 			builder.setContentIntent(contentIntent);
+			builder.setAutoCancel(true);
 
 			///////////
 			// Alert //
@@ -212,10 +224,6 @@ public class GCMIntentService extends GCMBaseIntentService {
 			builder.setDefaults(builder_defaults);
 
 			((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(1, builder.build());
-		}
-
-		if (CaffeinaGCMModule.getInstance() != null) {
-			CaffeinaGCMModule.getInstance().sendMessage(_data, false);
 		}
 	}
 
