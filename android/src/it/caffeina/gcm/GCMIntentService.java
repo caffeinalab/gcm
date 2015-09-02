@@ -106,26 +106,18 @@ public class GCMIntentService extends GCMBaseIntentService {
 		// Get the alert property and define the behavior //
 		////////////////////////////////////////////////////
 
-		if (TiApplication.isCurrentActivityInForeground()) {
+		Boolean appIsInForeground = TiApplication.isCurrentActivityInForeground();
 
+		if (appIsInForeground) {
 			Log.d(LCAT, "Message received but the app is on foreground, so you have to handle this in the app.");
-			if (CaffeinaGCMModule.getInstance() != null) {
-				CaffeinaGCMModule.getInstance().sendMessage(dataAsString, false);
-			}
-
 		} else if (data.containsKey("alert") == false) {
-
 			Log.d(LCAT, "Message received but alert is empty.");
-			if (CaffeinaGCMModule.getInstance() != null) {
-				CaffeinaGCMModule.getInstance().sendMessage(dataAsString, false);
-			}
-
 		} else {
 
 			String pkg = instance.getApplicationContext().getPackageName();
 
 			Intent launcherIntent = instance.getApplicationContext().getPackageManager().getLaunchIntentForPackage(pkg);
-			launcherIntent.setFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+			launcherIntent.setFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 			launcherIntent.addCategory(Intent.CATEGORY_LAUNCHER);
 			launcherIntent.putExtra("notification", dataAsString);
 
@@ -224,6 +216,10 @@ public class GCMIntentService extends GCMBaseIntentService {
 			builder.setDefaults(builder_defaults);
 
 			((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(1, builder.build());
+		}
+
+		if (CaffeinaGCMModule.getInstance() != null) {
+			CaffeinaGCMModule.getInstance().sendMessage(dataAsString, !appIsInForeground);
 		}
 	}
 

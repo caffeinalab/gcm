@@ -56,7 +56,6 @@ public class CaffeinaGCMModule extends KrollModule {
 				// Send old notification if present
 
 				Intent intent = TiApplication.getInstance().getRootOrCurrentActivity().getIntent();
-
 				if (intent.hasExtra("notification")) {
 					Log.d(LCAT, "Intent has notification in its extra");
 					sendMessage(intent.getStringExtra("notification"), true);

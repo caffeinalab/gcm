@@ -25,10 +25,10 @@
 	</fail>
 
 	<!-- Copy documentation subdirectories -->
-	<mkdir dir="${basedir}/documentation"/>
+	<!-- <mkdir dir="${basedir}/documentation"/>
 	<copy todir="${basedir}/documentation">
 		<fileset dir="${basedir}/../documentation"/>
-	</copy>
+	</copy> -->
 
 	<!-- Copy example subdirectories -->
 	<mkdir dir="${basedir}/example"/>
