@@ -13,6 +13,9 @@ import org.appcelerator.titanium.TiApplication;
 
 import com.google.android.gcm.GCMRegistrar;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -120,7 +123,7 @@ public class CaffeinaGCMModule extends KrollModule {
 
 		try {
 			HashMap<String, Object> e = new HashMap<String, Object>();
-			e.put("data", new Gson().fromJson(dataAsString, HashMap.class));
+			e.put("data", dataAsString);
 			e.put("inBackground", inBackground);
 
 			messageCallback.call(getKrollObject(), e);

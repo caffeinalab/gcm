@@ -14,6 +14,9 @@ import com.google.android.gcm.GCMBaseIntentService;
 import com.google.gson.Gson;
 import java.lang.reflect.Type;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
 import org.appcelerator.kroll.common.Log;
 import org.appcelerator.titanium.TiApplication;
 import org.appcelerator.titanium.util.TiRHelper;
@@ -78,11 +81,10 @@ public class GCMIntentService extends GCMBaseIntentService {
 			return;
 		}
 
-		Type type = new TypeToken< HashMap<String, String> >(){}.getType();
-		HashMap<String, String> data = null;
+		JsonObject data = null;
 
 		try {
-			data = new Gson().fromJson(dataAsString, type);
+			data = (JsonObject) new Gson().fromJson(dataAsString, JsonObject.class);
 		} catch (Exception ex) {
 			Log.e(LCAT, "No valid payload for this notifications");
 			return;
@@ -94,8 +96,8 @@ public class GCMIntentService extends GCMBaseIntentService {
 
 		int badge = 0;
 		try {
-			if (data.containsKey("badge")) {
-				badge = Integer.parseInt(data.get("badge"));
+			if (data.has("badge")) {
+				badge = data.getAsJsonPrimitive("badge").getAsInt();
 				BadgeUtils.setBadge(context, badge);
 			}
 		} catch (Exception ex) {
@@ -110,7 +112,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 
 		if (appIsInForeground) {
 			Log.d(LCAT, "Message received but the app is on foreground, so you have to handle this in the app.");
-		} else if (data.containsKey("alert") == false) {
+		} else if (data.has("alert") == false) {
 			Log.d(LCAT, "Message received but alert is empty.");
 		} else {
 
@@ -136,7 +138,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 			// Alert //
 			///////////
 
-			String alert = data.get("alert");
+			String alert = data.getAsJsonPrimitive("alert").getAsString();
 			builder.setContentText(alert);
 			builder.setTicker(alert);
 
@@ -151,9 +153,9 @@ public class GCMIntentService extends GCMBaseIntentService {
 			// Large icon //
 			////////////////
 
-			if (data.containsKey("largeicon")) {
+			if (data.has("largeicon")) {
 				try {
-					builder.setLargeIcon( getBitmapFromURL(data.get("largeicon")) );
+					builder.setLargeIcon( getBitmapFromURL(data.getAsJsonPrimitive("largeicon").getAsString()) );
 				} catch (Exception ex) {
 					Log.e(LCAT, ex.getMessage());
 				}
@@ -165,8 +167,8 @@ public class GCMIntentService extends GCMBaseIntentService {
 
 			int priority = 0;
 			try {
-				if (data.containsKey("priority")) {
-					priority = Integer.parseInt(data.get("priority"));
+				if (data.has("priority")) {
+					priority = data.getAsJsonPrimitive("priority").getAsInt();
 				}
 			} catch (Exception ex) {
 				Log.e(LCAT, ex.getMessage());
@@ -178,7 +180,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 			// Title //
 			///////////
 
-			builder.setContentTitle( data.containsKey("title") ? data.get("title") : instance.getAppInfo().getName() );
+			builder.setContentTitle( data.has("title") ? data.getAsJsonPrimitive("title").getAsString() : instance.getAppInfo().getName() );
 
 			///////////
 			// Badge //
@@ -192,11 +194,11 @@ public class GCMIntentService extends GCMBaseIntentService {
 			// Sound //
 			///////////
 
-			if (data.containsKey("sound")) {
-				if ("default".equals(data.get("sound"))) {
+			if (data.has("sound")) {
+				if ("default".equals(data.getAsJsonPrimitive("sound").getAsString())) {
 					builder_defaults |= Notification.DEFAULT_SOUND;
 				} else {
-					builder.setSound( Uri.parse("android.resource://" + pkg + "/" + getResource("raw", data.get("sound"))) );
+					builder.setSound( Uri.parse("android.resource://" + pkg + "/" + getResource("raw", data.getAsJsonPrimitive("sound").getAsString())) );
 				}
 			}
 
@@ -204,8 +206,15 @@ public class GCMIntentService extends GCMBaseIntentService {
 			// Vibration //
 			///////////////
 
-			if (data.containsKey("vibrate") && ( "true".equals(data.get("vibrate")) || "1".equals(data.get("vibrate")) ) ) {
-				builder_defaults |= Notification.DEFAULT_VIBRATE;
+			try {
+				if (data.has("vibrate")) {
+					JsonPrimitive vibrate = data.getAsJsonPrimitive("vibrate");
+					if ( (vibrate.isBoolean() && vibrate.getAsBoolean() == true) || (vibrate.getAsInt() == 1) ) {
+						builder_defaults |= Notification.DEFAULT_VIBRATE;
+					}
+				}
+			} catch(Exception ex) {
+				Log.e(LCAT, ex.getMessage());
 			}
 
 			///////////
