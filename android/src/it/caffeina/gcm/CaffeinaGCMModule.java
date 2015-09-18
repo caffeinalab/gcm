@@ -50,26 +50,6 @@ public class CaffeinaGCMModule extends KrollModule {
 
 		if (senderId != null) {
 			GCMRegistrar.register(TiApplication.getInstance(), senderId);
-			String registrationId = getRegistrationId();
-
-			if (registrationId != null && registrationId.length() > 0) {
-
-				sendSuccess(registrationId);
-
-				// Send old notification if present
-
-				Intent intent = TiApplication.getInstance().getRootOrCurrentActivity().getIntent();
-				if (intent.hasExtra("notification")) {
-					Log.d(LCAT, "Intent has notification in its extra");
-					sendMessage(intent.getStringExtra("notification"), true);
-				} else {
-					Log.d(LCAT, "No notification in Intent");
-				}
-
-			} else {
-				sendError("RegistrationId from GCM is empty");
-			}
-
 		} else {
 			sendError("No GCM senderId specified; get it from the Google Play Developer Console");
 		}
@@ -99,11 +79,26 @@ public class CaffeinaGCMModule extends KrollModule {
 	public void sendSuccess(String registrationId) {
 		if (successCallback == null) return;
 
-		HashMap<String, Object> e = new HashMap<String, Object>();
-		e.put("registrationId", registrationId);
-		e.put("deviceToken", registrationId);
+		if (registrationId != null && registrationId.length() > 0) {
 
-		successCallback.callAsync(getKrollObject(), e);
+			HashMap<String, Object> e = new HashMap<String, Object>();
+			e.put("registrationId", registrationId);
+			e.put("deviceToken", registrationId);
+
+			successCallback.callAsync(getKrollObject(), e);
+
+			// Send old notification if present
+
+			Intent intent = TiApplication.getInstance().getRootOrCurrentActivity().getIntent();
+			if (intent.hasExtra("notification")) {
+				Log.d(LCAT, "Intent has notification in its extra");
+				sendMessage(intent.getStringExtra("notification"), true);
+			} else {
+				Log.d(LCAT, "No notification in Intent");
+			}
+		} else {
+			sendError("RegistrationId from GCM is empty");
+		}
 	}
 
 	public void sendError(String error) {
