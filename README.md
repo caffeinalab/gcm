@@ -47,7 +47,7 @@ require('it.caffeina.gcm').unregisterForPushNotifications();
 #### Set the badge
 
 ```js
-require('it.caffeina.gcm').setBadge(2);
+require('it.caffeina.gcm').setAppBadge(2);
 ```
 
 #### Setting the icon
