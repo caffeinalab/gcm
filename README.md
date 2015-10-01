@@ -1,7 +1,5 @@
 # GCM: Google Cloud Messaging support
 
-**The code is inspired from https://github.com/morinel/gcmpush and edited for our purposes.**
-
 We have maintaned the same syntax of `Ti.Network` for iOS notifications, hope you like this choice :)
 
 The behaviour is the same of iOS:
@@ -129,3 +127,6 @@ The payload of the notifications is the same that comes from your server, with t
 * `inBackground`: A boolean value indicating if the notification has come when the app was in background, and the user has explicited clicked on the banner.
 
 
+#### License
+
+*The code is inspired from https://github.com/morinel/gcmpush and massively edited for our purposes.*
