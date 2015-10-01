@@ -1,4 +1,5 @@
-# GCM: Google Cloud Messaging support
+# Caffeina GCM
+### Google Cloud Messaging support for Titanium - Parse format compatible
 
 We have maintaned the same syntax of `Ti.Network` for iOS notifications, hope you like this choice :)
 
@@ -10,7 +11,8 @@ The behaviour is the same of iOS:
 #### Register for Push notifications
 
 ```js
-require('it.caffeina.gcm').registerForPushNotifications({
+var gcm = require('it.caffeina.gcm');
+gcm.registerForPushNotifications({
 
 	// you take this from the Google Developer Console, is the project ID
 	senderId: 'XXXXXXXXXXXX',
@@ -39,13 +41,15 @@ require('it.caffeina.gcm').registerForPushNotifications({
 #### Unregister
 
 ```js
-require('it.caffeina.gcm').unregisterForPushNotifications();
+gcm.unregisterForPushNotifications();
 ```
 
 #### Set the badge
 
+*Due system limitations, currently the badge over the icon is supported only on Samsung and Sony devices. This is why there's no an "Android official method" to draw that badge, but only via private API.*
+
 ```js
-require('it.caffeina.gcm').setAppBadge(2);
+gcm.setAppBadge(2);
 ```
 
 #### Setting the icon
@@ -126,6 +130,9 @@ The payload of the notifications is the same that comes from your server, with t
 
 * `inBackground`: A boolean value indicating if the notification has come when the app was in background, and the user has explicited clicked on the banner.
 
+#### Send the notification from Parse console
+
+Simply configure the GCM sender id in the Parse app settings, and send the notification.
 
 #### License
 
