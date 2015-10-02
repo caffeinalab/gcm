@@ -43,6 +43,16 @@ gcm.registerForPushNotifications({
 gcm.unregisterForPushNotifications();
 ```
 
+#### Properties
+
+##### `remoteNotificationsEnabled`
+
+Check if `registerForPushNotifications` has been called at least once
+
+#### `deviceToken` or `registrationId` or `remoteDeviceUUID`
+
+Get the device token (use `remoteDeviceUUID` for iOS parity)
+
 #### Set the badge
 
 *Due system limitations, currently the badge over the icon is supported only on Samsung and Sony devices. This is why there's no an "Android official method" to draw that badge, but only via private API.*

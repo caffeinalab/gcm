@@ -44,6 +44,7 @@ public class CaffeinaGCMModule extends KrollModule {
 	@SuppressWarnings("unchecked")
 	public void registerForPushNotifications(HashMap options) {
 		String senderId = (String)options.get("senderId");
+
 		successCallback = (KrollFunction)options.get("success");
 		errorCallback = (KrollFunction)options.get("error");
 		messageCallback = (KrollFunction)options.get("callback");
@@ -58,6 +59,19 @@ public class CaffeinaGCMModule extends KrollModule {
 	@Kroll.method
 	public void unregisterForPushNotifications() {
 		GCMRegistrar.unregister(TiApplication.getInstance());
+	}
+
+	@Kroll.method
+	@Kroll.getProperty
+	public Boolean isRemoteNotificationsEnabled() {
+		String registrationId = this.getRegistrationId();
+		return (registrationId != null && registrationId.length() > 0);
+	}
+
+	@Kroll.method
+	@Kroll.getProperty
+	public String getRemoteDeviceUUID() {
+		return this.getRegistrationId();
 	}
 
 	@Kroll.method
@@ -77,27 +91,30 @@ public class CaffeinaGCMModule extends KrollModule {
 	}
 
 	public void sendSuccess(String registrationId) {
-		if (successCallback == null) return;
+		if (successCallback == null) {
+			Log.e(LCAT, "sendSuccess invoked but no successCallback defined");
+			return;
+		}
 
-		if (registrationId != null && registrationId.length() > 0) {
-
-			HashMap<String, Object> e = new HashMap<String, Object>();
-			e.put("registrationId", registrationId);
-			e.put("deviceToken", registrationId);
-
-			successCallback.callAsync(getKrollObject(), e);
-
-			// Send old notification if present
-
-			Intent intent = TiApplication.getInstance().getRootOrCurrentActivity().getIntent();
-			if (intent.hasExtra("notification")) {
-				Log.d(LCAT, "Intent has notification in its extra");
-				sendMessage(intent.getStringExtra("notification"), true);
-			} else {
-				Log.d(LCAT, "No notification in Intent");
-			}
-		} else {
+		if (registrationId == null || registrationId.length() == 0) {
 			sendError("RegistrationId from GCM is empty");
+			return;
+		}
+
+		HashMap<String, Object> e = new HashMap<String, Object>();
+		e.put("registrationId", registrationId);
+		e.put("deviceToken", registrationId);
+
+		successCallback.callAsync(getKrollObject(), e);
+
+		// Send old notification if present
+
+		Intent intent = TiApplication.getInstance().getRootOrCurrentActivity().getIntent();
+		if (intent.hasExtra("notification")) {
+			Log.d(LCAT, "Intent has notification in its extra");
+			sendMessage(intent.getStringExtra("notification"), true);
+		} else {
+			Log.d(LCAT, "No notification in Intent");
 		}
 	}
 

@@ -1,1 +1,1 @@
-ant && (for f in dist/*.zip; do unzip -o $f -d ~/Library/Application\ Support/Titanium; done)
+ant && unzip -o "dist/it.caffeina.gcm-android-1.4.0.zip" -d ~/Library/Application\ Support/Titanium
