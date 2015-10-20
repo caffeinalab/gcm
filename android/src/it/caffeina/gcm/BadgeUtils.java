@@ -28,6 +28,7 @@ public class BadgeUtils {
         if (launcherClassName == null) {
             return;
         }
+
         Intent intent = new Intent("android.intent.action.BADGE_COUNT_UPDATE");
         intent.putExtra("badge_count", count);
         intent.putExtra("badge_count_package_name", context.getPackageName());
@@ -69,7 +70,6 @@ public class BadgeUtils {
     }
 
     private static String getLauncherClassName(Context context) {
-
         PackageManager pm = context.getPackageManager();
 
         Intent intent = new Intent(Intent.ACTION_MAIN);

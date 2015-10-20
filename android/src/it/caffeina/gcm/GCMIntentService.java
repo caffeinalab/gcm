@@ -38,7 +38,9 @@ public class GCMIntentService extends GCMBaseIntentService {
 
 	@Override
 	public void onRegistered(Context context, String registrationId) {
-		CaffeinaGCMModule.getInstance().sendSuccess(registrationId);
+		if (CaffeinaGCMModule.getInstance() != null) {
+			CaffeinaGCMModule.getInstance().sendSuccess(registrationId);
+		}
 	}
 
 	@Override
