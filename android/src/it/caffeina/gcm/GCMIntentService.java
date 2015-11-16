@@ -77,6 +77,10 @@ public class GCMIntentService extends GCMBaseIntentService {
 		Log.d(LCAT, "Push notification received");
 		TiApplication instance = TiApplication.getInstance();
 
+		for (String key : intent.getExtras().keySet()) {
+			Log.d(LCAT, "Debug intent -> " + key + " : " + intent.getExtras().getString(key));
+		}
+
 		String dataAsString = intent.getStringExtra("data");
 		if (dataAsString == null) {
 			Log.e(LCAT, "No data found in the payload");
