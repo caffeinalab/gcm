@@ -84,7 +84,7 @@ convert drawable-xxxhdpi/notificationicon.png -resize 36x36 drawable-hdpi/notifi
 convert drawable-xxxhdpi/notificationicon.png -resize 24x24 drawable-mdpi/notificationicon.png
 ```
 
-**If you don't set an icon, no notification is shown.**
+### If you don't set an icon, no notification is shown on the lock screen.
 
 #### Send the notification from your server
 
