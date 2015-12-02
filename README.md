@@ -78,6 +78,10 @@ It should be flat (no gradients), white and face-on perspective. You have to gen
 You can use this script to generate it once you put the icon in `drawable-xxxhdpi/notificationicon.png`
 
 ```sh
+mkdir drawable-xxhdpi
+mkdir drawable-xhdpi
+mkdir drawable-hdpi
+mkdir drwable-mdpi
 convert drawable-xxxhdpi/notificationicon.png -resize 72x72 drawable-xxhdpi/notificationicon.png
 convert drawable-xxxhdpi/notificationicon.png -resize 48x48 drawable-xhdpi/notificationicon.png
 convert drawable-xxxhdpi/notificationicon.png -resize 36x36 drawable-hdpi/notificationicon.png
