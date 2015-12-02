@@ -81,8 +81,7 @@ You can use this script to generate it once you put the icon in `drawable-xxxhdp
 mkdir drawable-xxhdpi
 mkdir drawable-xhdpi
 mkdir drawable-hdpi
-mkdir drwable-mdpi
-convert drawable-xxxhdpi/notificationicon.png -resize 72x72 drawable-xxhdpi/notificationicon.png
+mkdir drawable-mdpi
 convert drawable-xxxhdpi/notificationicon.png -resize 48x48 drawable-xhdpi/notificationicon.png
 convert drawable-xxxhdpi/notificationicon.png -resize 36x36 drawable-hdpi/notificationicon.png
 convert drawable-xxxhdpi/notificationicon.png -resize 24x24 drawable-mdpi/notificationicon.png
