@@ -1,6 +1,6 @@
 ![](http://f.cl.ly/items/1R2w3k1T3o1p3v0h2F2W/gcm.jpg)
 
-We have maintaned the same syntax of `Ti.Network` for iOS notifications, hope you like this choice :)
+We kept the same syntax of `Ti.Network` for iOS notifications, hope you like this choice :)
 
 The behaviour is the same of iOS:
 
