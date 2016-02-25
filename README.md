@@ -49,7 +49,7 @@ gcm.unregisterForPushNotifications();
 
 Check if `registerForPushNotifications` has been called at least once
 
-#### `deviceToken` or `registrationId` or `remoteDeviceUUID`
+##### `deviceToken` or `registrationId` or `remoteDeviceUUID`
 
 Get the device token (use `remoteDeviceUUID` for iOS parity)
 
