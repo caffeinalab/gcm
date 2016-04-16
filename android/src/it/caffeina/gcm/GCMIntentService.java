@@ -27,10 +27,12 @@ import java.net.URL;
 import java.net.HttpURLConnection;
 import java.io.InputStream;
 import java.io.BufferedInputStream;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class GCMIntentService extends GCMBaseIntentService {
 
 	private static final String LCAT = "it.caffeina.gcm.GCMIntentService";
+	private static final AtomicInteger id = new AtomicInteger(0);
 
 	public GCMIntentService() {
 		super("");
@@ -76,6 +78,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 	protected void onMessage(Context context, Intent intent) {
 		Log.d(LCAT, "Push notification received");
 		TiApplication instance = TiApplication.getInstance();
+		
 
 		String dataAsString = intent.getStringExtra("data");
 		if (dataAsString == null) {
@@ -135,7 +138,8 @@ public class GCMIntentService extends GCMBaseIntentService {
 			int builder_defaults = 0;
 			builder.setContentIntent(contentIntent);
 			builder.setAutoCancel(true);
-
+            int ntfId = id.getAndIncrement();
+            
 			///////////
 			// Alert //
 			///////////
@@ -226,7 +230,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 			builder_defaults |= Notification.DEFAULT_LIGHTS;
 			builder.setDefaults(builder_defaults);
 
-			((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(1, builder.build());
+			((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(ntfId, builder.build());
 		}
 
 		if (CaffeinaGCMModule.getInstance() != null) {
