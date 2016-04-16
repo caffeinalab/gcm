@@ -103,6 +103,7 @@ Option values:
 * `vibrate`: A boolean (`true` or `1`) value indicating if the phone should vibrate. Default is `false`.
 * `badge`: An integer value for the badge. The icon on the launchscreen will display this number on the right-top corner. Default is no badge.
 * `largeicon`: A URL represting a large icon to show. Default is null.
+* `color`: Background color of the notification icon
 
 **Remember, all custom properties must be inside the `data` key**
 

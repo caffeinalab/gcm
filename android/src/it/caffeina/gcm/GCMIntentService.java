@@ -28,6 +28,7 @@ import java.net.HttpURLConnection;
 import java.io.InputStream;
 import java.io.BufferedInputStream;
 import java.util.concurrent.atomic.AtomicInteger;
+import android.graphics.Color;
 
 public class GCMIntentService extends GCMBaseIntentService {
 
@@ -138,7 +139,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 			int builder_defaults = 0;
 			builder.setContentIntent(contentIntent);
 			builder.setAutoCancel(true);
-            int ntfId = id.getAndIncrement();
+			int ntfId = id.getAndIncrement();
             
 			///////////
 			// Alert //
@@ -166,6 +167,17 @@ public class GCMIntentService extends GCMBaseIntentService {
 					Log.e(LCAT, ex.getMessage());
 				}
 			}
+			////////////////
+            // Color //
+            ////////////////
+
+            if (data.has("color")) {
+                try {
+                    builder.setColor( Color.parseColor(data.getAsJsonPrimitive("color").getAsString()) );
+                } catch (Exception ex) {
+                    Log.e(LCAT, ex.getMessage());
+                }
+            }
 
 			//////////////
 			// Priority //
