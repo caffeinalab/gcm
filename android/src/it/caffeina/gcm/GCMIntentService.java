@@ -96,9 +96,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 			return;
 		}
 
-		/////////////////////////
-		// Badge on the splash //
-		/////////////////////////
+		// Badge on the splash
 
 		int badge = 0;
 		try {
@@ -110,9 +108,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 			Log.e(LCAT, ex.getMessage());
 		}
 
-		////////////////////////////////////////////////////
-		// Get the alert property and define the behavior //
-		////////////////////////////////////////////////////
+		// Get the alert property and define the behavior
 
 		Boolean appIsInForeground = TiApplication.isCurrentActivityInForeground();
 
@@ -131,34 +127,25 @@ public class GCMIntentService extends GCMBaseIntentService {
 
 			PendingIntent contentIntent = PendingIntent.getActivity(this, 0, launcherIntent, PendingIntent.FLAG_ONE_SHOT);
 
-			/////////////////////////////////
-			// Start building notification //
-			/////////////////////////////////
+			// Start building notification
 
 			NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 			int builder_defaults = 0;
 			builder.setContentIntent(contentIntent);
 			builder.setAutoCancel(true);
-			int ntfId = id.getAndIncrement();
             
-			///////////
-			// Alert //
-			///////////
+			// Alert 
 
 			String alert = data.getAsJsonPrimitive("alert").getAsString();
 			builder.setContentText(alert);
 			builder.setTicker(alert);
 
-			///////////
-			// Icons //
-			///////////
+			// Icons
 
 			int smallIcon = getResource("drawable", "notificationicon");
 			builder.setSmallIcon(smallIcon);
 
-			////////////////
-			// Large icon //
-			////////////////
+			// Large icon
 
 			if (data.has("largeicon")) {
 				try {
@@ -167,21 +154,19 @@ public class GCMIntentService extends GCMBaseIntentService {
 					Log.e(LCAT, ex.getMessage());
 				}
 			}
-			////////////////
-            // Color //
-            ////////////////
 
-            if (data.has("color")) {
-                try {
-                    builder.setColor( Color.parseColor(data.getAsJsonPrimitive("color").getAsString()) );
-                } catch (Exception ex) {
-                    Log.e(LCAT, ex.getMessage());
-                }
-            }
+			// Color
 
-			//////////////
-			// Priority //
-			//////////////
+			if (data.has("color")) {
+				try {
+					Log.d(LCAT, "COLOR SET " + data.getAsJsonPrimitive("color").getAsString());
+					builder.setColor( Color.parseColor(data.getAsJsonPrimitive("color").getAsString()) );
+				} catch (Exception ex) {
+					Log.e(LCAT, ex.getMessage());
+				}
+			}
+
+			// Priority
 
 			int priority = 0;
 			try {
@@ -194,23 +179,17 @@ public class GCMIntentService extends GCMBaseIntentService {
 
 			builder.setPriority(priority);
 
-			///////////
-			// Title //
-			///////////
+			// Title
 
 			builder.setContentTitle( data.has("title") ? data.getAsJsonPrimitive("title").getAsString() : instance.getAppInfo().getName() );
 
-			///////////
-			// Badge //
-			///////////
+			// Badge
 
 			if (badge != 0) {
 				builder.setNumber(badge);
 			}
 
-			///////////
-			// Sound //
-			///////////
+			// Sound 
 
 			if (data.has("sound")) {
 				if ("default".equals(data.getAsJsonPrimitive("sound").getAsString())) {
@@ -220,9 +199,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 				}
 			}
 
-			///////////////
-			// Vibration //
-			///////////////
+			// Vibration
 
 			try {
 				if (data.has("vibrate")) {
@@ -235,13 +212,12 @@ public class GCMIntentService extends GCMBaseIntentService {
 				Log.e(LCAT, ex.getMessage());
 			}
 
-			///////////
-			// Build //
-			///////////
+			// Build
 
 			builder_defaults |= Notification.DEFAULT_LIGHTS;
 			builder.setDefaults(builder_defaults);
 
+			int ntfId = id.getAndIncrement();
 			((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(ntfId, builder.build());
 		}
 
